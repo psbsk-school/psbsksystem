@@ -18,7 +18,7 @@
 - ✅ ติดตั้ง `clasp` (`npm install`)
 - ✅ สร้าง Apps Script project ใหม่ (standalone) และผูกกับโฟลเดอร์นี้ผ่าน `.clasp.json`
 - ✅ push `code.gs`, `sheets.gs`, `drive.gs`, `appsscript.json` ขึ้น Apps Script
-- ✅ สร้าง Web App deployment แบบ `ANYONE_ANONYMOUS` + `USER_DEPLOYING`
+- ✅ สร้าง Web App deployment แบบ `ANYONE` + `USER_ACCESSING` (ผู้ใช้กดอนุญาตสิทธิ์ของตัวเอง)
 - ✅ ใส่ Web App URL ลงใน `config.js` แล้ว
 - ✅ ตั้งค่า GitHub Actions workflow สำหรับ GitHub Pages
 
@@ -26,29 +26,19 @@
 
 ### 1. อนุญาตสิทธิ์ Apps Script (สำคัญ)
 
-Apps Script จะสร้าง Google Sheet (`Task Manager DB`) และโฟลเดอร์ Drive (`Task Manager Attachments`) เองอัตโนมัติตอนเรียกครั้งแรก แต่ owner ต้องกดอนุญาต scopes ก่อน:
+Deployment ถูกตั้งให้รันในนาม **ผู้ใช้ที่เข้าใช้งาน** (`USER_ACCESSING`) ดังนั้นบัญชีที่จะใช้งานแอปต้องกดอนุญาต scopes ครั้งแรก:
 
-1. เปิด <https://script.google.com/d/182Y_FwtfBbrIXzwF8mjN5ke_vLqAKGwlaI03mxq017i0mXKjihUlK4Yw/edit> (ล็อกอินด้วยบัญชีที่ใช้ `clasp`)
-2. เลือกฟังก์ชัน `doGet` ในแถบToolbar แล้วกด **Run** → กด **Review permissions** → เลือกบัญชี → **Advanced → Go to Task Manager API (unsafe)** → **Allow**
-3. ทดสอบ Web App URL ที่ <https://script.google.com/macros/s/AKfycbzoD4jbOn-0vr6IWrMKiIjWdIEiB1-XQe7YNUG3vdX_6bYoARxyBbNcKmHWH05lS6dd/exec> ต้องเห็น JSON `{"ok":true,...}`
+1. เปิด Web App URL ที่ <https://script.google.com/macros/s/AKfycbxSmMc2QxQcsAmlQJ-WSgcrhhdFepNFZtr9qd85QQFPP_xBR5AfTmXUFQtxnAl2YE3H/exec> ด้วยบัญชี Google ที่จะใช้ (เช่น `ps.bsk@bskschool.ac.th`)
+2. กด **Authorize required** / **Review permissions** → เลือกบัญชี → **Advanced → Go to Task Manager API (unsafe)** → **Allow**
+3. หน้าเว็บจะแสดง JSON `{"ok":true,...}` แสดงว่าสำเร็จ (script จะสร้าง Google Sheet `Task Manager DB` และโฟลเดอร์ Drive `Task Manager Attachments` ให้เองตอนนี้)
 
-> ถ้าเจอ 403 / ไม่พบสิทธิ์ แสดงว่ายังไม่ได้กด Allow ในขั้นตอนที่ 2
+> ถ้าเจอ 403 / ไม่พบสิทธิ์ แสดงว่ายังไม่ได้กด Allow ในขั้นตอนที่ 2 หรือล็อกอินบัญชีผิด
 
 ### 2. สร้าง GitHub repo และตั้งค่า Pages
 
-1. สร้าง repository ใหม่บน GitHub (เช่น `task-manager`)
-2. ในโฟลเดอร์นี้รัน:
-
-```powershell
-git init
-git remote add origin https://github.com/<USERNAME>/<REPO>.git
-git add -A
-git commit -m "Initial commit"
-git branch -M main
-git push -u origin main
-```
-
-3. ที่ repo → **Settings → Pages → Build and deployment** เลือก **Source: GitHub Actions** (workflow ที่มีอยู่จะ deploy เองทุกครั้งที่ push เข้า `main`)
+1. repo ที่ใช้: <https://github.com/psbsk-school/psbsksystem> (push ไปแล้วที่ branch `main`)
+2. ที่ repo → **Settings → Pages → Build and deployment** เลือก **Source: GitHub Actions** (workflow ที่มีอยู่จะ deploy เองทุกครั้งที่ push เข้า `main`)
+3. ถ้า clone ไปเครื่องอื่น ให้รัน `npm install` ก่อน จากนั้น `npm run push:all "message"` จะ push ทั้ง GitHub และ Apps Script
 
 ### 3. ใช้งาน/อัปเดต
 
@@ -63,10 +53,10 @@ npm run push:apps-script "message"       # push + deploy เฉพาะ Apps Sc
 
 ## ความปลอดภัย
 
-Web App ถูก deploy แบบ **ทุกคน (ANYONE_ANONYMOUS)** และ script รันในนามเจ้าของ (`USER_DEPLOYING`) ใครได้ URL ก็เรียก API ได้ เพื่อป้องกัน:
+Web App ถูก deploy แบบ **anyone with Google account (`ANYONE`) + USER_ACCESSING** แต่ละบัญชีต้องกด Allow สิทธิ์ของตัวเอง และข้อมูล Sheet/Drive จะอยู่ในบัญชีของผู้ใช้คนนั้น เพื่อป้องกันการเรียกใช้จากคนอื่น:
 
 - ใส่โทเค็นใน `APP.API_TOKEN` ใน `code.gs` และใส่ค่าเดียวกันใน `config.js` → `API_TOKEN` แล้ว push ใหม่ทั้ง 2 ฝั่ง
-- หรือเปลี่ยน deployment access เป็น **Anyone with Google account** / **Only myself** ใน Apps Script หากไม่ต้องการให้สาธารณะ
+- หรือเปลี่ยน deployment access เป็น **Only myself** ใน Apps Script หากให้ใช้งานเฉพาะบัญชีเดียว
 
 ## API actions
 
