@@ -1,0 +1,16 @@
+{
+  "name": "task-manager-gpages-appsscript",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Task Manager on GitHub Pages with Google Sheets/Drive via Apps Script",
+  "scripts": {
+    "push:github": "node scripts/push.js --github-only",
+    "push:apps-script": "node scripts/push.js --apps-only",
+    "push:all": "node scripts/push.js",
+    "clasp:login": "clasp login",
+    "clasp:deploy": "clasp deploy"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.4.1"
+  }
+}

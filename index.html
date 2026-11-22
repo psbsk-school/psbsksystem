@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager | GitHub Pages + Apps Script</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <h1>Task Manager</h1>
+        <p class="subtitle">GitHub Pages · Google Sheets · Google Drive</p>
+      </div>
+      <div class="topbar-actions">
+        <a id="sheetLink" class="link-btn" href="#" target="_blank" rel="noopener" hidden>📊 Google Sheet</a>
+        <a id="driveLink" class="link-btn" href="#" target="_blank" rel="noopener" hidden>📁 Drive</a>
+        <button id="refreshBtn" class="ghost-btn" type="button">🔄 รีเฟรช</button>
+      </div>
+    </header>
+
+    <div id="notice" class="notice" role="status" hidden></div>
+
+    <main class="layout">
+      <section class="panel">
+        <h2 id="formTitle">เพิ่มงานใหม่</h2>
+        <form id="taskForm">
+          <label>
+            ชื่องาน <span class="required">*</span>
+            <input id="title" name="title" type="text" maxlength="200" required placeholder="เช่น รายงานรายสัปดาห์" />
+          </label>
+          <label>
+            รายละเอียด
+            <textarea id="description" name="description" rows="3" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+          </label>
+          <div class="row">
+            <label>
+              ความสำคัญ
+              <select id="priority" name="priority">
+                <option value="low">ต่ำ</option>
+                <option value="normal" selected>ปกติ</option>
+                <option value="high">สูง</option>
+              </select>
+            </label>
+            <label>
+              กำหนดส่ง
+              <input id="dueDate" name="dueDate" type="date" />
+            </label>
+          </div>
+          <label>
+            ไฟล์แนบ (อัปโหลดไป Google Drive)
+            <input id="attachment" name="attachment" type="file" />
+          </label>
+          <div class="form-actions">
+            <button id="submitBtn" class="primary-btn" type="submit">เพิ่มงาน</button>
+            <button id="cancelBtn" class="ghost-btn" type="button" hidden>ยกเลิก</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="list-header">
+          <h2>รายการงาน <span id="count" class="count">0</span></h2>
+          <div class="filters" role="group" aria-label="กรองสถานะ">
+            <button class="filter-btn active" data-filter="all" type="button">ทั้งหมด</button>
+            <button class="filter-btn" data-filter="todo" type="button">ยังไม่ทำ</button>
+            <button class="filter-btn" data-filter="done" type="button">เสร็จแล้ว</button>
+          </div>
+        </div>
+        <div id="taskList" class="task-list">
+          <p class="empty">กำลังโหลดข้อมูล...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

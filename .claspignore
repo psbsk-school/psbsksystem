@@ -1,0 +1,4 @@
+# ส่งเฉพาะไฟล์ Apps Script ขึ้นไป (frontend อยู่บน GitHub Pages)
+**
+!*.gs
+!appsscript.json
